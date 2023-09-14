@@ -7,6 +7,10 @@ David's homepage is over at: http://davesrocketworks.com/electronics/cpm68/simul
 
 ## Changelog
 
+09/14/2023:
+- cpm400.bin (BDOS) which is provided as a S-Record file from DR is now converted from the S-Record file to binary form with a Makefile target
+- Added the official CP/M-68K 1.3 Disks to the assets folder
+
 09/13/2023:
 - Update to Musashi 4.10:
 - Added a build target for the BIOS needed by CP/M-68K
