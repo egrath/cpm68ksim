@@ -7,6 +7,10 @@ David's homepage is over at: http://davesrocketworks.com/electronics/cpm68/simul
 
 ## Changelog
 
+10/01/2023:
+- put all musashi related files into a subdirectory "musashi/" to unclutter the source directory
+- simplify the main makefile by splitting up musashi and the simulator
+
 09/14/2023:
 - cpm400.bin (BDOS) which is provided as a S-Record file from DR is now converted from the S-Record file to binary form with a Makefile target
 - Added the official CP/M-68K 1.3 Disks to the assets folder

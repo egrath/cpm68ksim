@@ -67,7 +67,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "cpmsim.h"
-#include "m68k.h"
+#include "musashi/m68k.h"
 
 //#define FIGFORTH
 
