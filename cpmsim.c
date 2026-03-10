@@ -40,7 +40,7 @@
    is created from the srecords in cpm400.sr. The second is in simbios.bin
    which contains the BIOS. Both of these files must be binaries and not
    srecords.
-   
+
    If you want to alter the bios, rebuild simbios.bin using:
 
    asl simbios.s
@@ -118,6 +118,7 @@
 #define MAX_ROM 0           // all RAM
 #define MAX_RAM 0xffffff    // 16MB of RAM
 
+# define BIOS_START 0x6000
 
 /* Read/write macros */
 #define READ_BYTE(BASE, ADDR) (BASE)[ADDR]
@@ -194,7 +195,7 @@ unsigned int g_fc;       /* Current function code from CPU */
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
- 
+
 struct termios oldattr;
 
 int kbhit(void)
@@ -207,7 +208,7 @@ int kbhit(void)
   timeout.tv_sec  = 0;
   timeout.tv_usec = 0;
 
-  return select(STDIN_FILENO + 1, &rdset, NULL, NULL, &timeout);  
+  return select(STDIN_FILENO + 1, &rdset, NULL, NULL, &timeout);
 }
 
 void memdump(int start, int end)
@@ -304,7 +305,7 @@ unsigned int MC6850_data_read(void)
   if(read(STDIN_FILENO, &ch, 1) == 1)
     return ch;
 
-  else 
+  else
     return -1;
 }
 
@@ -318,7 +319,7 @@ int MC6850_status_read()
 
 void output_device_update(void)
 {
-  
+
 }
 
 int MC6850_device_ack(void)
@@ -416,7 +417,7 @@ void disk_read(int sector)
          do _res = (long int) (expr); \
          while (_res == -1L && errno == EINTR); \
          _res; })
-#endif 
+#endif
 
 void disk_write(int sector)
 {
@@ -449,7 +450,7 @@ void disk_write(int sector)
   count = SEC_SIZE;
   do {
     i = TEMP_FAILURE_RETRY(write(g_disk_fds[g_disk_drive],
-				 &g_ram[g_disk_dma+SEC_SIZE-count], count)); 
+				 &g_ram[g_disk_dma+SEC_SIZE-count], count));
     if(i == -1)
       return;
     count -= i;
@@ -689,7 +690,7 @@ unsigned int m68k_read_disassembler_32(unsigned int address)
 {
   return cpu_read_long(address);
 }
-    
+
 /*
   Print some information on the instruction and state.
  */
@@ -697,7 +698,7 @@ void trace(int pc)
 {
   char buf[256];
 
-  m68k_disassemble(buf, pc, M68K_CPU_TYPE_68000); 
+  m68k_disassemble(buf, pc, M68K_CPU_TYPE_68000);
 
   fprintf(stderr, "%06x:%s   A0:%06x A1:%06x A2:%06x A3:%06x\r\n", pc, buf,
 	  m68k_get_reg(NULL, M68K_REG_A0),
@@ -734,9 +735,9 @@ void load_srecords(void)
   if(read(fd, g_ram, 8) == -1)         // read initial SP and PC
     exit_error("Error reading %s", BIOS_IMAGE);
 
-  lseek(fd, 0x6000, SEEK_SET);         // skip to BIOS at 0x6000
+  lseek(fd, BIOS_START, SEEK_SET);         // skip to BIOS at BIOS_START
 
-  if((i = read(fd, &g_ram[0x6000], MAX_RAM+1)) == -1)
+  if((i = read(fd, &g_ram[BIOS_START], (MAX_RAM-BIOS_START)+1)) == -1)
     exit_error("Error reading %s", BIOS_IMAGE);
 
   fprintf(stderr, "Read %d bytes of CP/M-68K BIOS image.\n", i);
@@ -750,7 +751,7 @@ void list(int start, int end)
 
   for(pc = start; pc < end; )
     {
-      i =  m68k_disassemble(buf, pc, M68K_CPU_TYPE_68000); 
+      i =  m68k_disassemble(buf, pc, M68K_CPU_TYPE_68000);
       printf("%x %s\n", pc, buf);
       pc += i;
     }
