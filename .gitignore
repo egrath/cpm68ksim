@@ -5,3 +5,5 @@ simbios.p
 cpmsim
 m68kmake
 m68kops.c m68kops.h
+cpm400.bin
+musashi/m68kops.[ch]
